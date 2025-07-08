@@ -2,7 +2,11 @@
 
 ## Descrizione
 
-Questa applicazione nasce con l'esigenza di **abbattere i tempi nella ricerca del file all'interno del server**. È uno strumento di ricerca rapida per file di progettazione CAD che permette di trovare velocemente i file utilizzando un prefisso del nome.
+Questa applicazione nasce con l'esigenza di **abbattere i tempi nella ricerca del file all'interno del server**. 
+È uno strumento di ricerca rapida per file di progettazione CAD pensato per essere utilizzato in affiancamento 
+al software **Creo parametric**
+Il programma permette di trovare velocemente i disegni CAD 3D attraverso la ricerca per prefisso del nome file, organizzati
+all'interno del server in cartelle compresse chiamate con il rispettivo codice di riferimento.
 
 ## Caratteristiche Principali
 
@@ -17,7 +21,8 @@ Questa applicazione nasce con l'esigenza di **abbattere i tempi nella ricerca de
 
 ### Impostazione delle Cartelle di Ricerca
 
-Per configurare l'applicazione, modifica il file `config.py` e inserisci la **cartella più grande** all'interno della quale il programma deve cercare i file:
+Per configurare l'applicazione, modifica il file `config.py` e inserisci il percorso della cartella
+all'interno della quale il programma deve cercare i file:
 
 ```python
 CARTELLE_DA_CERCARE = [
@@ -104,7 +109,7 @@ pip install pyinstaller
 **Comando semplice (raccomandato):**
 
 ```bash
-pyinstaller --onefile --windowed --icon=favicon.ico --name="search3D" main.py
+pyinstaller --onefile --windowed --icon=favicon.ico --add-data "favicon.ico;." --name="search3D" main.py
 ```
 
 ### 3. Risultato
