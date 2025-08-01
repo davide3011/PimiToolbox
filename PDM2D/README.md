@@ -1,175 +1,222 @@
-# Ricerca Disegni 2D
+# PDM2D
+
+## Indice
+
+1. **Descrizione**
+2. **Funzionalità principali**
+3. **Requisiti di sistema**
+4. **Installazione**
+5. **Configurazione variabili d'ambiente (`.env`)**
+6. **Struttura del progetto**
+7. **Come si usa**
+8. **Compatibilità e sistema operativo supportato**
+9. **Compilazione per sviluppatori**
+10. **Licenza**
+11. **Contatti e autore**
+
+---
 
 ## Descrizione
 
-Applicazione desktop per la ricerca rapida di file di progettazione 2D, sviluppata specificamente per essere utilizzata in affiancamento al software **ME10 Drafting**. Il programma permette di trovare velocemente i disegni tecnici attraverso la ricerca per prefisso del nome file e include una funzionalità di drag & drop che consente di trascinare direttamente i file sulla finestra di ME10 per aprirli e visualizzarli.
+**PDM2D** è un'applicazione desktop progettata per facilitare l'individuazione rapida di file di disegno tecnico 2D, con particolare attenzione all'integrazione con il software **ME10 Drafting**. L'utente può eseguire ricerche per prefisso del nome file all'interno di più cartelle configurabili e aprire i file trovati tramite un semplice gesto di drag & drop direttamente sull'interfaccia di ME10.
 
-## Caratteristiche Principali
+L'interfaccia grafica, sviluppata con PySide6 (Qt for Python), è ottimizzata per garantire reattività e chiarezza. Tutte le impostazioni sono centralizzate in un file `.env`, che rende l'app facilmente configurabile senza necessità di modificare il codice sorgente.
 
-### Ricerca Intelligente
-- **Ricerca per prefisso**: Trova rapidamente i file inserendo solo l'inizio del nome (es. "37202.60010")
-- **Ricerca multi-cartella**: Scansiona automaticamente tutte le cartelle configurate
-- **Ricerca ricorsiva**: Esplora anche le sottocartelle
-- **Gestione errori**: Segnala cartelle inaccessibili o problemi di permessi
+Questa soluzione è pensata per contesti industriali e uffici tecnici che gestiscono quotidianamente grandi quantità di disegni 2D archiviati in rete o su percorsi locali, riducendo i tempi di ricerca e migliorando la produttività operativa.
 
-### Interazione Avanzata
-- **Doppio click**: Apri direttamente i file con l'applicazione predefinita
-- **Drag & Drop**: Trascina i file dalla lista dei risultati verso altre applicazioni
-- **Interfaccia reattiva**: Ricerca in background senza bloccare l'interfaccia
+---
 
-### Interfaccia Moderna
-- **Design pulito**: Interfaccia grafica moderna e intuitiva
-- **Responsive**: Si adatta automaticamente alle dimensioni dello schermo
-- **Feedback visivo**: Indicatori di stato durante la ricerca
-- **Tooltips informativi**: Mostra il percorso completo dei file
+## Funzionalità principali
 
-### Configurazione Flessibile
-- **Cartelle personalizzabili**: Configura facilmente i percorsi di ricerca
-- **Supporto percorsi di rete**: Compatibile con cartelle condivise (UNC)
-- **Gestione permessi**: Rileva e segnala problemi di accesso
+- **Ricerca per prefisso del nome file**: consente all'utente di individuare rapidamente i disegni tecnici inserendo solo le iniziali del nome.
+- **Supporto per percorsi multipli**: permette la scansione simultanea di più directory, configurabili tramite file `.env`.
+- **Apertura immediata dei file**: i file trovati possono essere aperti con un doppio clic o trascinati direttamente in ME10 Drafting. Sono supportati anche i documenti in formato PDF.
+- **Interfaccia grafica reattiva e moderna**: costruita con PySide6, fornisce un'esperienza utente fluida e professionale.
+- **Personalizzazione dell'aspetto**: layout, dimensioni e margini dell'interfaccia sono completamente configurabili senza modificare il codice.
+- **Messaggistica integrata**: l'app fornisce messaggi informativi e di errore chiari, per guidare l'utente durante l'uso.
+- **Adatta a contesti aziendali**: ottimizzata per ambienti multiutente e reti condivise, ideale per uffici tecnici e reparti progettazione.
 
-## Integrazione con ME10 Drafting
+---
 
-Questo strumento è stato progettato per complementare il workflow di **ME10 Drafting**, permettendo di:
-- Localizzare rapidamente i disegni tecnici durante la progettazione
-- Trascinare i file direttamente nell'ambiente ME10
-- Mantenere un flusso di lavoro fluido senza dover navigare manualmente nelle cartelle
-- Accedere velocemente ai file di riferimento durante la modellazione
+## Requisiti di sistema
+- **Sistema operativo**: Windows 10 o superiore, Debian 12
+- **Python**: Versione 3.9 o superiore (solo per compilazione)
+- **Dipendenze Python**:
+  - [PySide6](https://pypi.org/project/PySide6/)
+  - [python-dotenv](https://pypi.org/project/python-dotenv/)
+- **ME10 Drafting installato**: necessario per aprire i file `.mi`
+- **Permessi di rete**: accesso in lettura ai percorsi condivisi specificati in `.env`
 
-## Requisiti di Sistema
-
-- **Sistema Operativo**: Windows 10/11
-- **Python**: 3.8 o superiore
-- **Dipendenze**: PySide6 >= 6.5.0
+---
 
 ## Installazione
 
-1. **Clona o scarica il progetto**
+### 1. Clona il repository
+```bash
+git clone https://github.com/davide3011/PimiToolbox.git
+cd PDM2D
+```
 
-2. **Installa le dipendenze**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+Consulta la sezione **Compilazione per sviluppatori** per creare l'eseguibile. Successivamente configura il file `.env`.
 
-3. **Configura i percorsi di ricerca**:
-   Modifica il file `config.py` e aggiorna la lista `CARTELLE_DA_CERCARE` con i tuoi percorsi:
-   ```python
-   CARTELLE_DA_CERCARE = [
-       r"C:\Progetti\Disegni",
-       # Aggiungi altri percorsi...
-   ]
-   ```
+---
 
-4. **Avvia l'applicazione**:
-   ```bash
-   python main.py
-   ```
+## Configurazione variabili d'ambiente (`.env`)
 
-## Utilizzo
+Il file `.env` consente di personalizzare il comportamento dell'applicazione senza modificare il codice sorgente. Va posizionato nella stessa cartella dell'eseguibile (search2D.exe) o del file main.py se si esegue da sorgente.
 
-1. **Avvia il programma** eseguendo `main.py`
-2. **Inserisci il prefisso** del file che stai cercando (es. "37202.60010")
-3. **Clicca "Cerca File"** o premi Invio
-4. **Interagisci con i risultati**:
-   - **Doppio click** per aprire il file
-   - **Trascina** il file verso altre applicazioni (ME10, Esplora file, ecc.)
+### 1. Percorsi di ricerca
 
-## Struttura del Progetto
+```ini
+CARTELLE_DA_CERCARE=C:\Progetti\ME10,Z:\ArchivioDisegni\Produzione,Y:\CAD\Disegni2024
+```
+Questa è la variabile principale, che specifica le directory in cui l'app deve cercare i file di disegno.
+
+- I percorsi devono essere separati da virgole, **senza spazi**.
+- Sono ammessi sia percorsi locali (`C:\...`) che di rete (`\\server\condivisione`).
+- Tutti i percorsi indicati devono esistere ed essere accessibili dall'utente che esegue il programma.
+---
+
+### 2. Dimensioni e posizione della finestra
+```ini
+WINDOW_SCREEN_RATIO_WIDTH=0.25
+WINDOW_SCREEN_RATIO_HEIGHT=0.7
+WINDOW_POSITION_OFFSET_X=0
+WINDOW_POSITION_OFFSET_Y=-0.05
+``` 
+
+Queste variabili determinano la larghezza e l'altezza della finestra rispetto allo schermo, oltre alla posizione (offset X e Y).
+
+- I valori sono frazioni (es. `0.25` = 25% della larghezza dello schermo).
+- Gli offset possono essere negativi o positivi per regolare la posizione sul desktop.
+
+```ini
+ICON_FILE=favicon.ico
+```
+Indica il file icona da usare come logo della finestra. Deve trovarsi nella stessa cartella del programma. Il file deve avere estensione `.ico`.
+
+---
+
+### 3. Layout
+
+```ini
+MAIN_SPACING=5
+MAIN_MARGINS_TOP=18
+MAIN_MARGINS_RIGHT=18
+MAIN_MARGINS_BOTTOM=18
+MAIN_MARGINS_LEFT=18
+```
+
+Personalizzano il layout interno della finestra: margini, spaziature e distanza tra i componenti dell'interfaccia. I valori sono in pixel.
+
+```ini
+FOOTER_MARGINS_TOP=10
+FOOTER_MARGINS_RIGHT=10
+FOOTER_MARGINS_BOTTOM=1
+FOOTER_MARGINS_LEFT=10
+```
+Controllano la spaziatura attorno al footer in fondo alla finestra principale.
+
+```ini
+RESULTS_MIN_HEIGHT=450
+SEARCH_SECTION_MIN_HEIGHT=150
+RESULTS_SECTION_MIN_HEIGHT=300
+```
+Definiscono le altezze minime di alcune aree della GUI, utili per assicurare una buona visualizzazione anche su schermi piccoli.
+
+### 4. Testi dell'interfaccia utente
+```ini
+SEARCH_PLACEHOLDER=es. 37202.60010
+SEARCH_BUTTON=Cerca File
+NO_RESULTS=Nessun file trovato con il prefisso specificato
+FILE_OPENED=File aperto:
+```
+Queste voci ti permettono di personalizzare i messaggi e i testi visualizzati all'interno dell'applicazione, come etichette dei pulsanti e notifiche.
+
+### 5. Messaggi di errore personalizzati
+```ini
+ERROR_EMPTY_PREFIX=Prefisso vuoto o non valido
+ERROR_FOLDER_NOT_EXISTS=Attenzione: La cartella {folder} non esiste.
+```
+Puoi personalizzare anche i messaggi di errore visualizzati agli utenti. Le variabili tra parentesi graffe verranno sostituite dinamicamente.
+
+---
+
+Una volta completato e salvato correttamente, il file `.env` verrà caricato automaticamente all'avvio del programma.
+
+Assicurati che:
+- Ogni variabile sia su una riga separata.
+- Non ci siano spazi tra nome, `=` e valore.
+- Il file abbia nome `.env` (senza estensione aggiuntiva).
+
+---
+
+## Struttura del progetto
 
 ```
-PDM3D/
-├── main.py            # Entry point dell'applicazione
+PDM2D/
+├── backend.py         # Logica di ricerca e apertura file
+├── config.py          # Variabili d'ambiente centralizzate
 ├── frontend.py        # Interfaccia grafica (GUI)
-├── backend.py         # Logica di ricerca file
-├── config.py          # Configurazioni e costanti
-├── styles.py          # Stili CSS per l'interfaccia
-├── utils.py           # Funzioni di utilità
-├── requirements.txt   # Dipendenze Python
-├── favicon.ico        # Icona dell'applicazione
-└── README.md          # Questo file
+├── main.py            # Entry point dell'app
+├── styles.py          # Stili grafici Qt
+├── utils.py           # Utilità generali (icone, compatibilità)
+├── favicon.ico        # Icona applicazione
+├── .env               # File configurazione utente
+└── requirements.txt   # Dipendenze Python
 ```
 
-## Componenti Principali
+---
 
-### Frontend (`frontend.py`)
-- **SearchGUI**: Finestra principale dell'applicazione
-- **DragDropListWidget**: Lista personalizzata con supporto drag & drop
-- **SearchThread**: Thread per ricerca asincrona
+## Come si usa
 
-### Backend (`backend.py`)
-- **FileSearcher**: Motore di ricerca file
-- Gestione percorsi e validazione file
-- Apertura file con applicazioni predefinite
+1. **Avvia l'eseguibile** (es. `search2D.exe`)
+2. **Inserisci un prefisso** (es. `37202.60010`)
+3. **Visualizza e seleziona** tra i file elencati
+4. **Apri il file** con doppio clic o trascinalo in ME10
 
-### Configurazione (`config.py`)
-- Percorsi di ricerca
-- Messaggi dell'interfaccia
-- Impostazioni finestra e layout
-
-## Personalizzazione
-
-### Aggiungere Nuove Cartelle
-Modifica `CARTELLE_DA_CERCARE` in `config.py`:
-```python
-CARTELLE_DA_CERCARE = [
-    r"C:\Percorso\Alla\Cartella1",
-    r"C:\Percorso\Alla\Cartella2"
-    # Aggiungi altre cartelle qui...
-]
+Esempio:
+```
+Input: 37202.60010
+Risultati:
+- 37202.60010.mi
+- 37202.60010.pdf
+- 37202.60010_v1.mi
 ```
 
-### Modificare l'Interfaccia
-Personalizza i colori e lo stile modificando `styles.py`.
+---
 
-### Cambiare i Messaggi
-Modifica i testi in `config.py` nella sezione `MESSAGES` e `UI_TEXTS`.
+## Compatibilità e sistema operativo supportato
 
-## Risoluzione Problemi
+- ✅ Testato su Windows 10 e Windows 11 (architettura x64)
+- ✅ Testato e funzionante su Debian 12 (Linux)
+- ❌ Non testato su macOS/iOS
 
-### Cartelle Non Accessibili
-- Verifica i permessi di lettura
-- Per cartelle di rete, assicurati di essere connesso
-- Controlla che i percorsi siano corretti
+---
 
-### File Non Si Aprono
-- Verifica che esista un'applicazione predefinita per il tipo di file
-- Controlla i permessi del file
-- Assicurati che il file non sia in uso da altre applicazioni
-
-## Compilazione per Eseguibile
-
-Per creare un eseguibile dell'applicazione:
+## Compilazione per sviluppatori
 
 ### 1. Installa PyInstaller
 ```bash
 pip install pyinstaller
 ```
 
-### 2. Crea l'Eseguibile
+### 2. Crea l'eseguibile
 ```bash
 pyinstaller --onefile --windowed --icon=favicon.ico --add-data "favicon.ico;." --name="search2D" main.py
 ```
 
-### 3. Distribuzione
-Troverai l'eseguibile in `dist/search2D.exe` pronto per la distribuzione.
-
-## Sviluppo
-
-### Architettura
-- **Pattern MVC**: Separazione tra logica (backend), interfaccia (frontend) e configurazione
-- **Threading**: Ricerca asincrona per mantenere l'interfaccia reattiva
-- **Modularità**: Componenti separati e riutilizzabili
-
-### Estensioni Future
-- Ricerca per contenuto file
-- Filtri avanzati (data, dimensione, tipo)
-- Cronologia ricerche
-- Integrazione con sistemi PLM
-
-## Autore
-
-**Davide Grilli**
+Il file compilato sarà generato in `dist/search2D.exe`
 
 ---
 
-*Questo strumento è stato sviluppato per ottimizzare il workflow di progettazione in ambiente ME10 Drafting, fornendo un accesso rapido e intuitivo ai file di progetto 2D.*
+## Licenza
+
+Questo progetto è distribuito con licenza **MIT**. Per maggiori informazioni, consulta il file `LICENSE` incluso nel repository.
+
+---
+
+## Contatti e autore
+
+**Autore**: Davide Grilli 
+**Email**: [davide.grilli@outlook.com](mailto:davide.grilli@outlook.com)

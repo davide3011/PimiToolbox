@@ -1,4 +1,3 @@
-import sys
 import os
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget,
@@ -155,6 +154,7 @@ class SearchGUI(QMainWindow):
     def _create_search_section(self):
         search_frame = QFrame()
         search_frame.setObjectName("searchFrame")
+        search_frame.setMinimumHeight(LAYOUT_CONFIG['search_section_min_height'])
         search_layout = QVBoxLayout(search_frame)
         
         prefix_label = QLabel(UI_TEXTS['prefix_label'])
@@ -180,6 +180,7 @@ class SearchGUI(QMainWindow):
     def _create_results_section(self):
         results_frame = QFrame()
         results_frame.setObjectName("resultsFrame")
+        results_frame.setMinimumHeight(LAYOUT_CONFIG['results_section_min_height'])
         results_layout = QVBoxLayout(results_frame)
         
         results_label = QLabel(UI_TEXTS['results_label'])
@@ -199,6 +200,9 @@ class SearchGUI(QMainWindow):
         self._create_footer()
     
     def _create_footer(self):
+        # Aggiungi uno spacer per spingere il footer verso il fondo
+        self.main_layout.addStretch()
+        
         footer_frame = QFrame()
         footer_frame.setObjectName("footerFrame")
         footer_layout = QVBoxLayout(footer_frame)
@@ -209,7 +213,8 @@ class SearchGUI(QMainWindow):
         footer_label.setObjectName("footerLabel")
         footer_layout.addWidget(footer_label)
         
-        self.main_layout.addWidget(footer_frame)
+        # Aggiungi il footer senza stretch factor per mantenerlo adiacente al fondo
+        self.main_layout.addWidget(footer_frame, 0)
     
     def avvia_ricerca(self):
         search_prefix = self.entry_prefisso.text().strip()
@@ -255,16 +260,24 @@ class SearchGUI(QMainWindow):
             self.info_label.setText(MESSAGES['no_results'])
             return
         
+        # Crea tutti gli item in una volta sola
+        items = []
         valid_files = 0
+        
         for file_path in risultati:
+            item = QListWidgetItem()
             if file_path.startswith(("Attenzione:", "Errore:")):
-                item = QListWidgetItem(file_path)
+                item.setText(file_path)
                 item.setData(Qt.UserRole, None)
             else:
-                item = QListWidgetItem(os.path.basename(file_path))
+                item.setText(os.path.basename(file_path))
                 item.setToolTip(f"Percorso completo: {file_path}")
                 item.setData(Qt.UserRole, file_path)
                 valid_files += 1
+            items.append(item)
+        
+        # Aggiungi tutti gli item in una volta
+        for item in items:
             self.list_risultati.addItem(item)
         
         self.info_label.setText(f"{MESSAGES['success_prefix']} {valid_files} file")
@@ -282,15 +295,6 @@ class SearchGUI(QMainWindow):
                 self.info_label.setText(f"{MESSAGES['file_opened']} {os.path.basename(file_path)}")
         except Exception as e:
             QMessageBox.critical(self, MESSAGES['error_title'], f"Si è verificato un errore:\n{str(e)}")
-    
-    def aggiungi_cartella(self, cartella):
-        self.file_searcher.aggiungi_cartella(cartella)
-    
-    def rimuovi_cartella(self, cartella):
-        self.file_searcher.rimuovi_cartella(cartella)
-    
-    def get_cartelle(self):
-        return self.file_searcher.get_cartelle()
     
     def run(self):
         self.show()
