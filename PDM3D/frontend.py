@@ -1,11 +1,11 @@
-import sys
 import os
 from PySide6.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QWidget,
     QLabel, QLineEdit, QPushButton, QMessageBox,
     QFrame, QListWidget, QListWidgetItem
 )
-from PySide6.QtCore import Qt, QThread, Signal
+from PySide6.QtCore import Qt, QThread, Signal, QUrl, QMimeData
+from PySide6.QtGui import QDrag
 from backend import FileSearcher
 from config import (
     WINDOW_TITLE, WINDOW_SCREEN_RATIO, WINDOW_POSITION_OFFSET_RATIO,
@@ -13,6 +13,61 @@ from config import (
 )
 from styles import get_application_styles
 from utils import create_app_icon
+
+class DragDropListWidget(QListWidget):
+    """QListWidget personalizzata con supporto per drag and drop"""
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setDragDropMode(QListWidget.DragOnly)
+        self.setDefaultDropAction(Qt.CopyAction)
+    
+    def startDrag(self, supportedActions):
+        """Avvia il drag and drop quando l'utente trascina un elemento"""
+        item = self.currentItem()
+        if not item:
+            return
+        
+        file_path = item.data(Qt.UserRole)
+        if not file_path:
+            return
+        
+        # Crea il drag object
+        drag = QDrag(self)
+        mimeData = QMimeData()
+        
+        # Imposta l'URL del file per il drag and drop
+        url = QUrl.fromLocalFile(file_path)
+        mimeData.setUrls([url])
+        
+        # Imposta anche il testo del percorso
+        mimeData.setText(file_path)
+        
+        drag.setMimeData(mimeData)
+        
+        # Esegui il drag
+        drag.exec_(Qt.CopyAction)
+    
+    def mousePressEvent(self, event):
+        """Gestisce il click del mouse per iniziare il drag"""
+        if event.button() == Qt.LeftButton:
+            self.drag_start_position = event.pos()
+        super().mousePressEvent(event)
+    
+    def mouseMoveEvent(self, event):
+        """Gestisce il movimento del mouse per il drag"""
+        if not (event.buttons() & Qt.LeftButton):
+            return
+        
+        if not hasattr(self, 'drag_start_position'):
+            return
+        
+        # Controlla se il mouse si è mosso abbastanza per iniziare il drag
+        if ((event.pos() - self.drag_start_position).manhattanLength() < 
+            QApplication.startDragDistance()):
+            return
+        
+        self.startDrag(Qt.CopyAction)
 
 class SearchThread(QThread):
     search_completed = Signal(dict)
@@ -99,6 +154,7 @@ class SearchGUI(QMainWindow):
     def _create_search_section(self):
         search_frame = QFrame()
         search_frame.setObjectName("searchFrame")
+        search_frame.setMinimumHeight(LAYOUT_CONFIG['search_section_min_height'])
         search_layout = QVBoxLayout(search_frame)
         
         prefix_label = QLabel(UI_TEXTS['prefix_label'])
@@ -124,13 +180,14 @@ class SearchGUI(QMainWindow):
     def _create_results_section(self):
         results_frame = QFrame()
         results_frame.setObjectName("resultsFrame")
+        results_frame.setMinimumHeight(LAYOUT_CONFIG['results_section_min_height'])
         results_layout = QVBoxLayout(results_frame)
         
         results_label = QLabel(UI_TEXTS['results_label'])
         results_label.setObjectName("resultsLabel")
         results_layout.addWidget(results_label)
         
-        self.list_risultati = QListWidget()
+        self.list_risultati = DragDropListWidget()
         self.list_risultati.setObjectName("resultsList")
         self.list_risultati.itemDoubleClicked.connect(self._handle_item_double_click)
         results_layout.addWidget(self.list_risultati, 1)
@@ -143,6 +200,9 @@ class SearchGUI(QMainWindow):
         self._create_footer()
     
     def _create_footer(self):
+        # Aggiungi uno spacer per spingere il footer verso il fondo
+        self.main_layout.addStretch()
+        
         footer_frame = QFrame()
         footer_frame.setObjectName("footerFrame")
         footer_layout = QVBoxLayout(footer_frame)
@@ -153,7 +213,8 @@ class SearchGUI(QMainWindow):
         footer_label.setObjectName("footerLabel")
         footer_layout.addWidget(footer_label)
         
-        self.main_layout.addWidget(footer_frame)
+        # Aggiungi il footer senza stretch factor per mantenerlo adiacente al fondo
+        self.main_layout.addWidget(footer_frame, 0)
     
     def avvia_ricerca(self):
         search_prefix = self.entry_prefisso.text().strip()
@@ -199,16 +260,24 @@ class SearchGUI(QMainWindow):
             self.info_label.setText(MESSAGES['no_results'])
             return
         
+        # Crea tutti gli item in una volta sola
+        items = []
         valid_files = 0
+        
         for file_path in risultati:
+            item = QListWidgetItem()
             if file_path.startswith(("Attenzione:", "Errore:")):
-                item = QListWidgetItem(file_path)
+                item.setText(file_path)
                 item.setData(Qt.UserRole, None)
             else:
-                item = QListWidgetItem(os.path.basename(file_path))
+                item.setText(os.path.basename(file_path))
                 item.setToolTip(f"Percorso completo: {file_path}")
                 item.setData(Qt.UserRole, file_path)
                 valid_files += 1
+            items.append(item)
+        
+        # Aggiungi tutti gli item in una volta
+        for item in items:
             self.list_risultati.addItem(item)
         
         self.info_label.setText(f"{MESSAGES['success_prefix']} {valid_files} file")
@@ -226,15 +295,6 @@ class SearchGUI(QMainWindow):
                 self.info_label.setText(f"{MESSAGES['file_opened']} {os.path.basename(file_path)}")
         except Exception as e:
             QMessageBox.critical(self, MESSAGES['error_title'], f"Si è verificato un errore:\n{str(e)}")
-    
-    def aggiungi_cartella(self, cartella):
-        self.file_searcher.aggiungi_cartella(cartella)
-    
-    def rimuovi_cartella(self, cartella):
-        self.file_searcher.rimuovi_cartella(cartella)
-    
-    def get_cartelle(self):
-        return self.file_searcher.get_cartelle()
     
     def run(self):
         self.show()

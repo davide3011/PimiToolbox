@@ -1,142 +1,223 @@
-# Ricerca Disegni 3D
+# PDM2D
+
+## Indice
+
+1. **Descrizione**
+2. **Funzionalità principali**
+3. **Requisiti di sistema**
+4. **Installazione**
+5. **Configurazione variabili d'ambiente (`.env`)**
+6. **Struttura del progetto**
+7. **Come si usa**
+8. **Compatibilità e sistema operativo supportato**
+9. **Compilazione per sviluppatori**
+10. **Licenza**
+11. **Contatti e autore**
+
+---
 
 ## Descrizione
 
-Questa applicazione nasce con l'esigenza di **abbattere i tempi nella ricerca del file all'interno del server**. 
-È uno strumento di ricerca rapida per file di progettazione CAD pensato per essere utilizzato in affiancamento 
-al software **Creo parametric**
-Il programma permette di trovare velocemente i disegni CAD 3D attraverso la ricerca per prefisso del nome file, organizzati
-all'interno del server in cartelle compresse chiamate con il rispettivo codice di riferimento.
+**PDM3D** è un'applicazione desktop progettata per facilitare l'individuazione rapida di file di disegno tecnico 3D, con particolare attenzione all'integrazione con il software **Creo Parametric 10**. L'utente può eseguire ricerche per prefisso del nome file all'interno di più cartelle configurabili.
 
-## Caratteristiche Principali
+L'interfaccia grafica, sviluppata con PySide6 (Qt for Python), è ottimizzata per garantire reattività e chiarezza. Tutte le impostazioni sono centralizzate in un file `.env`, che rende l'app facilmente configurabile senza necessità di modificare il codice sorgente.
 
-- **Ricerca rapida**: Trova file utilizzando un prefisso del nome
-- **Interfaccia grafica moderna**: Sviluppata con PySide6 (Qt6)
-- **Ricerca multi-cartella**: Supporta la ricerca in più directory contemporaneamente
-- **Apertura diretta**: Doppio click sui risultati per aprire i file
-- **Ricerca asincrona**: L'interfaccia rimane reattiva durante la ricerca
-- **Gestione errori**: Messaggi informativi per problemi di accesso o permessi
+Questa soluzione è pensata per contesti industriali e uffici tecnici che gestiscono quotidianamente grandi quantità di disegni 3D archiviati in rete o su percorsi locali, riducendo i tempi di ricerca e migliorando la produttività operativa.
 
-## Configurazione
+---
 
-### Impostazione delle Cartelle di Ricerca
+## Funzionalità principali
 
-Per configurare l'applicazione, modifica il file `config.py` e inserisci il percorso della cartella
-all'interno della quale il programma deve cercare i file:
+- **Ricerca per prefisso del nome file**: consente all'utente di individuare rapidamente i disegni tecnici inserendo solo le iniziali del nome.
+- **Supporto per percorsi multipli**: permette la scansione simultanea di più directory, configurabili tramite file `.env`.
+- **Apertura immediata dei file**: i file trovati possono essere aperti con un doppio clic o trascinati direttamente nella directory di lavoro.
+- **Interfaccia grafica reattiva e moderna**: costruita con PySide6, fornisce un'esperienza utente fluida e professionale.
+- **Personalizzazione dell'aspetto**: layout, dimensioni e margini dell'interfaccia sono completamente configurabili senza modificare il codice.
+- **Messaggistica integrata**: l'app fornisce messaggi informativi e di errore chiari, per guidare l'utente durante l'uso.
+- **Adatta a contesti aziendali**: ottimizzata per ambienti multiutente e reti condivise, ideale per uffici tecnici e reparti progettazione.
 
-```python
-CARTELLE_DA_CERCARE = [
-    # Inserire qui i percorsi delle cartelle da cercare:
-    r"C:\Percorso\Alla\Cartella1",
-    r"C:\Percorso\Alla\Cartella2"
-]
-```
+---
 
-### Note per la Configurazione
+## Requisiti di sistema
+- **Sistema operativo**: Windows 10 o superiore, Debian 12
+- **Python**: Versione 3.9 o superiore (solo per compilazione)
+- **Dipendenze Python**:
+  - [PySide6](https://pypi.org/project/PySide6/)
+  - [python-dotenv](https://pypi.org/project/python-dotenv/)
+- **Creo Parametric 10 installato**: necessario per aprire i file `.prt`
+- **Permessi di rete**: accesso in lettura ai percorsi condivisi specificati in `.env`
 
-- Utilizzare **percorsi assoluti** (completi)
-- Per percorsi di rete usare la notazione UNC (`\\server\cartella`)
-- Assicurarsi di avere i **permessi di lettura** per tutte le cartelle
-- Ogni percorso deve terminare con una virgola (tranne l'ultimo)
+---
 
-### Altre Configurazioni Disponibili
+## Installazione
 
-Nel file `config.py` è possibile personalizzare:
-- Nome e versione dell'applicazione
-- Dimensioni e posizione della finestra
-- Messaggi dell'interfaccia utente
-- Configurazioni di layout
-
-## Informazioni Tecniche
-
-### Architettura
-
-L'applicazione è strutturata in moduli separati per una migliore manutenibilità:
-
-- **`main.py`**: Punto di ingresso dell'applicazione
-- **`frontend.py`**: Interfaccia grafica utente (GUI)
-- **`backend.py`**: Logica di ricerca dei file
-- **`config.py`**: Configurazioni centralizzate
-- **`styles.py`**: Stili CSS per l'interfaccia
-- **`utils.py`**: Funzioni di utilità
-
-### Dipendenze
-
-- **Python 3.11+**: Linguaggio di programmazione
-- **PySide6**: Framework per l'interfaccia grafica (Qt6)
-- **Threading**: Per ricerche asincrone non bloccanti
-- **OS Module**: Per l'accesso al filesystem
-
-### Funzionalità Tecniche
-
-- **Ricerca ricorsiva**: Esplora tutte le sottocartelle
-- **Gestione thread**: Ricerca in background per mantenere l'UI reattiva
-- **Validazione percorsi**: Controllo dell'esistenza e accessibilità dei file
-- **Gestione eccezioni**: Handling robusto degli errori di sistema
-- **Icona personalizzata**: Supporto per favicon.ico
-
-## Installazione e Utilizzo
-
-### Prerequisiti
-
-- Python 3.11 o superiore
-- Sistema operativo Windows (per `os.startfile()`)
-
-### Installazione Dipendenze
-
+### 1. Clona il repository
 ```bash
-pip install -r requirements.txt
+git clone https://github.com/davide3011/PimiToolbox.git
+cd PDM3D
 ```
 
-### Esecuzione
-
-```bash
-python main.py
+### 2. Installa dipendenze
 ```
 
-## Compilazione per Eseguibile
+Consulta la sezione **Compilazione per sviluppatori** per creare l'eseguibile. Successivamente configura il file `.env`.
 
-Per creare un eseguibile dell'applicazione:
+---
+
+## Configurazione variabili d'ambiente (`.env`)
+
+Il file `.env` consente di personalizzare il comportamento dell'applicazione senza modificare il codice sorgente. Va posizionato nella stessa cartella dell'eseguibile (search3D.exe) o del file main.py se si esegue da sorgente.
+
+### 1. Percorsi di ricerca
+
+```ini
+CARTELLE_DA_CERCARE=C:\Progetti\ME10,Z:\ArchivioDisegni\Produzione,Y:\CAD\Disegni2024
+```
+Questa è la variabile principale, che specifica le directory in cui l'app deve cercare i file di disegno.
+
+- I percorsi devono essere separati da virgole, **senza spazi**.
+- Sono ammessi sia percorsi locali (`C:\...`) che di rete (`\\server\condivisione`).
+- Tutti i percorsi indicati devono esistere ed essere accessibili dall'utente che esegue il programma.
+---
+
+### 2. Dimensioni e posizione della finestra
+```ini
+WINDOW_SCREEN_RATIO_WIDTH=0.25
+WINDOW_SCREEN_RATIO_HEIGHT=0.7
+WINDOW_POSITION_OFFSET_X=0
+WINDOW_POSITION_OFFSET_Y=-0.05
+``` 
+
+Queste variabili determinano la larghezza e l'altezza della finestra rispetto allo schermo, oltre alla posizione (offset X e Y).
+
+- I valori sono frazioni (es. `0.25` = 25% della larghezza dello schermo).
+- Gli offset possono essere negativi o positivi per regolare la posizione sul desktop.
+
+```ini
+ICON_FILE=favicon.ico
+```
+Indica il file icona da usare come logo della finestra. Deve trovarsi nella stessa cartella del programma. Il file deve avere estensione `.ico`.
+
+---
+
+### 3. Layout
+
+```ini
+MAIN_SPACING=5
+MAIN_MARGINS_TOP=18
+MAIN_MARGINS_RIGHT=18
+MAIN_MARGINS_BOTTOM=18
+MAIN_MARGINS_LEFT=18
+```
+
+Personalizzano il layout interno della finestra: margini, spaziature e distanza tra i componenti dell'interfaccia. I valori sono in pixel.
+
+```ini
+FOOTER_MARGINS_TOP=10
+FOOTER_MARGINS_RIGHT=10
+FOOTER_MARGINS_BOTTOM=1
+FOOTER_MARGINS_LEFT=10
+```
+Controllano la spaziatura attorno al footer in fondo alla finestra principale.
+
+```ini
+RESULTS_MIN_HEIGHT=450
+SEARCH_SECTION_MIN_HEIGHT=150
+RESULTS_SECTION_MIN_HEIGHT=300
+```
+Definiscono le altezze minime di alcune aree della GUI, utili per assicurare una buona visualizzazione anche su schermi piccoli.
+
+### 4. Testi dell'interfaccia utente
+```ini
+SEARCH_PLACEHOLDER=es. 37202-60010
+SEARCH_BUTTON=Cerca File
+NO_RESULTS=Nessun file trovato con il prefisso specificato
+FILE_OPENED=File aperto:
+```
+Queste voci ti permettono di personalizzare i messaggi e i testi visualizzati all'interno dell'applicazione, come etichette dei pulsanti e notifiche.
+
+### 5. Messaggi di errore personalizzati
+```ini
+ERROR_EMPTY_PREFIX=Prefisso vuoto o non valido
+ERROR_FOLDER_NOT_EXISTS=Attenzione: La cartella {folder} non esiste.
+```
+Puoi personalizzare anche i messaggi di errore visualizzati agli utenti. Le variabili tra parentesi graffe verranno sostituite dinamicamente.
+
+---
+
+Una volta completato e salvato correttamente, il file `.env` verrà caricato automaticamente all'avvio del programma.
+
+Assicurati che:
+- Ogni variabile sia su una riga separata.
+- Non ci siano spazi tra nome, `=` e valore.
+- Il file abbia nome `.env` (senza estensione aggiuntiva).
+
+---
+
+## Struttura del progetto
+
+```
+PDM3D/
+├── backend.py         # Logica di ricerca e apertura file
+├── config.py          # Variabili d'ambiente centralizzate
+├── frontend.py        # Interfaccia grafica (GUI)
+├── main.py            # Entry point dell'app
+├── styles.py          # Stili grafici Qt
+├── utils.py           # Utilità generali (icone, compatibilità)
+├── favicon.ico        # Icona applicazione
+├── .env               # File configurazione utente
+└── requirements.txt   # Dipendenze Python
+```
+
+---
+
+## Come si usa
+
+1. **Avvia l'eseguibile** (es. `search3D.exe`)
+2. **Inserisci un prefisso** (es. `37202-60010`)
+3. **Visualizza e seleziona** tra i file elencati
+4. **Apri il file** con doppio clic o trascinalo in ME10
+
+Esempio:
+```
+Input: 37202-60010
+Risultati:
+- 37202-60010.prt
+```
+
+---
+
+## Compatibilità e sistema operativo supportato
+
+- ✅ Testato su Windows 10 e Windows 11 (architettura x64)
+- ✅ Testato e funzionante su Debian 12 (architettura aarch64)
+- ❌ Non testato su macOS/iOS
+
+---
+
+## Compilazione per sviluppatori
 
 ### 1. Installa PyInstaller
-
 ```bash
 pip install pyinstaller
 ```
 
-### 2. Crea l'Eseguibile
-
-**Comando semplice (raccomandato):**
-
+### 2. Crea l'eseguibile
 ```bash
 pyinstaller --onefile --windowed --icon=favicon.ico --add-data "favicon.ico;." --name="search3D" main.py
 ```
 
-### 3. Risultato
-
-Troverai l'eseguibile in:
-- **`dist/search3D.exe`** - Il file finale da distribuire
-
-### 4. Distribuzione
-
-Per distribuire l'applicazione:
-1. Copia l'eseguibile `RicercaDisegni3D.exe`
-2. Assicurati che il file `favicon.ico` sia nella stessa directory (se necessario)
-3. L'eseguibile è standalone e non richiede Python installato
-
-## Utilizzo dell'Applicazione
-
-1. **Avvia** l'applicazione
-2. **Inserisci** il prefisso del file da cercare (es. "37202-60010")
-3. **Clicca** "Cerca File" o premi Invio
-4. **Visualizza** i risultati nella lista
-5. **Doppio click** su un risultato per aprire il file
-
-## Autore
-
-**Davide Grilli** 
-Versione 1.0
+Il file compilato sarà generato in `dist/search3D.exe`
 
 ---
 
-*Questa applicazione è stata progettata per ottimizzare i flussi di lavoro CAD riducendo significativamente i tempi di ricerca dei file di progettazione.*
+## Licenza
+
+Questo progetto è distribuito con licenza **MIT**. Per maggiori informazioni, consulta il file `LICENSE` incluso nel repository.
+
+---
+
+## Contatti e autore
+
+**Autore**: Davide Grilli 
+**Email**: [davide.grilli@outlook.com](mailto:davide.grilli@outlook.com)
